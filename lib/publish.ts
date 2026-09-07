@@ -57,3 +57,14 @@ export async function publishCategory(category: "sports" | "movies" | "breaking"
 
   return results;
 }
+
+export async function publishAllCategories() {
+  const categories: ("sports" | "movies" | "breaking")[] = ["sports", "movies", "breaking"];
+  const summary: Record<string, unknown> = {};
+
+  for (const category of categories) {
+    summary[category] = await publishCategory(category);
+  }
+
+  return summary;
+}
