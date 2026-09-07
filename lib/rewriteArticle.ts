@@ -1,3 +1,5 @@
+import { fetchWithRetry } from "./fetchWithRetry";
+
 export async function rewriteArticle(article: {
   title: string;
   description: string;
@@ -15,7 +17,7 @@ Original content: ${article.description}\n${article.content}
 Respond ONLY as JSON, no markdown, no backticks:
 {"title": "...", "body": "..."}`;
 
-  const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+  const res = await fetchWithRetry("https://api.groq.com/openai/v1/chat/completions", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

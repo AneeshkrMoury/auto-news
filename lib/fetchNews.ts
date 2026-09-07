@@ -1,3 +1,5 @@
+import { fetchWithRetry } from "./fetchWithRetry";
+
 export const MAX_ARTICLES_PER_CATEGORY = 5;
 
 const CATEGORY_QUERIES: Record<string, string> = {
@@ -12,7 +14,7 @@ export async function fetchNews(category: string) {
 
   const url = `https://gnews.io/api/v4/search?q=${encodeURIComponent(query)}&lang=en&max=${MAX_ARTICLES_PER_CATEGORY}&apikey=${process.env.GNEWS_API_KEY}`;
 
-  const res = await fetch(url);
+  const res = await fetchWithRetry(url);
   if (!res.ok) throw new Error(`GNews request failed: ${res.status}`);
 
   const data = await res.json();
