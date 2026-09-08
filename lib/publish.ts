@@ -15,56 +15,48 @@ async function uploadWithRetry(fileName: string, imageBuffer: Buffer, retries = 
   }
 }
 
+async function processArticle(article: any, category: string) {
+  try {
+    const rewritten = await rewriteArticle(article);
+    const imageBuffer = await generateImage(
+      `Poster-style sports illustration, dynamic action pose, no readable text, no jersey numbers, no logos, cinematic lighting: ${rewritten.title}`
+    );
+
+    const fileName = `${category}-${Date.now()}-${Math.random().toString(36).slice(2)}.png`;
+    await uploadWithRetry(fileName, imageBuffer);
+
+    const { data: urlData } = supabase.storage.from("images").getPublicUrl(fileName);
+
+    const { error: insertError } = await supabase.from("posts").insert({
+      title: rewritten.title,
+      body: rewritten.body,
+      image_url: urlData.publicUrl,
+      category,
+      source_url: article.url,
+    });
+
+    if (insertError) {
+      if (insertError.code === "23505") {
+        return { title: rewritten.title, status: "skipped (duplicate)" };
+      }
+      throw insertError;
+    }
+
+    return { title: rewritten.title, status: "published" };
+  } catch (err) {
+    return { title: article.title, status: "failed", error: String(err) };
+  }
+}
+
 export async function publishCategory(category: "sports" | "movies" | "breaking") {
   const articles = await fetchNews(category);
-  const results = [];
-
-  for (const article of articles) {
-    try {
-      const rewritten = await rewriteArticle(article);
-      const imageBuffer = await generateImage(
-        `Poster-style sports illustration, dynamic action pose, no readable text, no jersey numbers, no logos, cinematic lighting: ${rewritten.title}`
-      );
-
-      const fileName = `${category}-${Date.now()}-${Math.random().toString(36).slice(2)}.png`;
-      await uploadWithRetry(fileName, imageBuffer);
-
-      const { data: urlData } = supabase.storage.from("images").getPublicUrl(fileName);
-
-      const { error: insertError } = await supabase.from("posts").insert({
-        title: rewritten.title,
-        body: rewritten.body,
-        image_url: urlData.publicUrl,
-        category,
-        source_url: article.url,
-      });
-
-      if (insertError) {
-        if (insertError.code === "23505") {
-          // duplicate source_url — already published, skip quietly
-          results.push({ title: rewritten.title, status: "skipped (duplicate)" });
-          continue;
-        }
-        throw insertError;
-      }
-
-      results.push({ title: rewritten.title, status: "published" });
-    } catch (err) {
-      // one bad article shouldn't kill the whole batch
-      results.push({ title: article.title, status: "failed", error: String(err) });
-    }
-  }
-
-  return results;
+  return Promise.all(articles.map((article: any) => processArticle(article, category)));
 }
 
 export async function publishAllCategories() {
   const categories: ("sports" | "movies" | "breaking")[] = ["sports", "movies", "breaking"];
-  const summary: Record<string, unknown> = {};
-
-  for (const category of categories) {
-    summary[category] = await publishCategory(category);
-  }
-
-  return summary;
+  const results = await Promise.all(
+    categories.map(async (category) => [category, await publishCategory(category)] as const)
+  );
+  return Object.fromEntries(results);
 }
