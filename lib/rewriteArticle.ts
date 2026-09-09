@@ -1,11 +1,15 @@
 import { fetchWithRetry } from "./fetchWithRetry";
 
-export async function rewriteArticle(article: {
-  title: string;
-  description: string;
-  content: string;
-}) {
-const prompt = `Rewrite this news article in your own words, clear and engaging.
+export async function rewriteArticle(article: { title: string; description: string; content: string }) {
+  if (process.env.MOCK_MODE === "true") {
+    return {
+      title: `[MOCK] ${article.title}`,
+      body: "This is fake rewritten content for testing.\n\n*This article was rewritten with AI assistance. Please verify details independently.*",
+    };
+  }
+
+  const prompt = `Rewrite this news article in your own words, clear and engaging.
+
 STRICT RULES:
 - Only use facts, quotes, and details present in the original text below.
 - Do NOT invent quotes, numbers, names, or details not explicitly stated.

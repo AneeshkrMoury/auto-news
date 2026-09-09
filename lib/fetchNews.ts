@@ -8,11 +8,20 @@ const CATEGORY_QUERIES: Record<string, string> = {
   breaking: "breaking news",
 };
 
-export async function fetchNews(category: string) {
+export async function fetchNews(category: string, limit: number = MAX_ARTICLES_PER_CATEGORY) {
+  if (process.env.MOCK_MODE === "true") {
+    return [{
+      title: `Mock ${category} article`,
+      description: "This is a fake article for local testing.",
+      content: "Fake content body for testing the pipeline without burning API quota.",
+      url: `https://example.com/mock-${category}-${Date.now()}`,
+    }];
+  }
+
   const query = CATEGORY_QUERIES[category];
   if (!query) throw new Error(`Unknown category: ${category}`);
 
-  const url = `https://gnews.io/api/v4/search?q=${encodeURIComponent(query)}&lang=en&max=${MAX_ARTICLES_PER_CATEGORY}&apikey=${process.env.GNEWS_API_KEY}`;
+  const url = `https://gnews.io/api/v4/search?q=${encodeURIComponent(query)}&lang=en&max=${limit}&apikey=${process.env.GNEWS_API_KEY}`;
 
   const res = await fetchWithRetry(url);
   if (!res.ok) throw new Error(`GNews request failed: ${res.status}`);

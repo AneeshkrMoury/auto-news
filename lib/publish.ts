@@ -48,15 +48,21 @@ async function processArticle(article: any, category: string) {
   }
 }
 
-export async function publishCategory(category: "sports" | "movies" | "breaking") {
-  const articles = await fetchNews(category);
+export async function publishCategory(category: "sports" | "movies" | "breaking", limit?: number) {
+  const articles = await fetchNews(category, limit);
   return Promise.all(articles.map((article: any) => processArticle(article, category)));
 }
 
-export async function publishAllCategories() {
+export async function publishAllCategories(limit?: number) {
   const categories: ("sports" | "movies" | "breaking")[] = ["sports", "movies", "breaking"];
   const results = await Promise.all(
-    categories.map(async (category) => [category, await publishCategory(category)] as const)
+    categories.map(async (category) => {
+      try {
+        return [category, await publishCategory(category, limit)] as const;
+      } catch (err) {
+        return [category, { error: String(err) }] as const;
+      }
+    })
   );
   return Object.fromEntries(results);
 }
