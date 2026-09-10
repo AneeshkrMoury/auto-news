@@ -24,6 +24,8 @@ export default function ArticlePage({ article, pageNumber }: { article: Article;
     ? paragraphs.pop()
     : null;
 
+  const side = pageNumber % 2 === 0 ? "left" : "right";
+
   return (
     <div
       className="w-full h-full px-14 py-12 overflow-hidden"
@@ -32,8 +34,13 @@ export default function ArticlePage({ article, pageNumber }: { article: Article;
       <ArticleKicker category={article.category} />
       <ArticleHeadline title={article.title} />
       <ArticleByline category={article.category} publishedAt={article.published_at} />
-      <ArticleImage src={article.image_url} />
-      <ArticleBody paragraphs={paragraphs} />
+
+      {/* Image + body share one container so the float wraps correctly */}
+      <div>
+        <ArticleImage src={article.image_url} side={side}/>
+        <ArticleBody paragraphs={paragraphs} />
+      </div>
+
       {disclosure && <ArticleDisclosure text={disclosure} />}
       <PageFooter pageNumber={pageNumber} />
     </div>

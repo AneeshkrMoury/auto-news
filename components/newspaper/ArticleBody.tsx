@@ -1,5 +1,6 @@
-// Justified body text. First paragraph gets a large drop-cap first letter,
-// matching classic print newspaper styling.
+// Justified body text. First paragraph gets a drop-cap first letter.
+// The image (rendered as a sibling before this) floats right, so these
+// paragraphs wrap around it naturally via CSS float behavior.
 export default function ArticleBody({ paragraphs }: { paragraphs: string[] }) {
   return (
     <div className="text-lg leading-relaxed text-justify [hyphens:auto]">
@@ -15,6 +16,7 @@ export default function ArticleBody({ paragraphs }: { paragraphs: string[] }) {
           {p}
         </p>
       ))}
+      <div style={{ clear: "both" }} />
     </div>
   );
 }
