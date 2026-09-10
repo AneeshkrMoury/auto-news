@@ -1,18 +1,27 @@
-import ArticlePage from "@/components/newspaper/ArticlePage";
+import FrontPage from "@/components/newspaper/FrontPage";
 
-const fakeArticle = {
-  title: "Ice Hockey Star Sues Over Head Injury That Affected Marital Intimacy",
-  body: "A professional ice hockey player has filed a lawsuit against his former team's medical staff, alleging that a mishandled head injury led to lasting effects on his personal life.\n\nThe player, whose identity is being withheld pending further proceedings, is seeking damages related to ongoing medical care and lost income.\n\nThe team has not yet issued a public statement.\n\n*This article was rewritten with AI assistance. Please verify details independently.*",
-  image_url: "https://picsum.photos/1200/675",
-  category: "sports",
-  published_at: "2026-09-08T00:00:00Z",
+const fakeFrontPage = {
+  edition: "Morning" as const,
+  date: "September 9, 2026",
+  featured: {
+    title: "A Healthier Planet Builds a Stronger Future",
+    snippet: "Global leaders renew commitment to clean energy, green jobs and a more sustainable tomorrow.",
+    imageUrl: "https://picsum.photos/id/1015/1200/675",
+    category: "Climate",
+  },
+  teasers: [
+    { title: "Nations Unite on Climate Goals", imageUrl: "https://picsum.photos/id/1016/200/200", pageNumber: 2 },
+    { title: "The Power of a Kinder World", imageUrl: "https://picsum.photos/id/1018/200/200", pageNumber: 4 },
+    { title: "Communities Lead the Way in Climate Action", imageUrl: "https://picsum.photos/id/1019/200/200", pageNumber: 6 },
+    { title: "The Next Generation Takes the Stage", imageUrl: "https://picsum.photos/id/1020/200/200", pageNumber: 8 },
+  ],
 };
 
 export default function Home() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-neutral-400 p-10">
       <div className="w-[680px] shadow-2xl">
-        <ArticlePage article={fakeArticle} pageNumber={3} />
+        <FrontPage {...fakeFrontPage} />
       </div>
     </div>
   );
