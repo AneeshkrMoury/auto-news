@@ -56,3 +56,16 @@ export async function getArticleWithNeighbors(id: string) {
     next: index < allPosts.length - 1 ? allPosts[index + 1] : null,
   };
 }
+
+// Fetches all "new" posts for a single category, for the category page.
+export async function getCategoryPosts(category: string) {
+  const { data: posts, error } = await supabasePublic
+    .from("posts")
+    .select("*")
+    .eq("status", "new")
+    .eq("category", category)
+    .order("published_at", { ascending: false });
+
+  if (error) throw error;
+  return posts || [];
+}
