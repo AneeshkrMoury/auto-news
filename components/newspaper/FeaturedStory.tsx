@@ -1,17 +1,19 @@
-// The single large lead story at the top of the front page.
-// Shows headline, a short snippet (first paragraph only), and hero image.
+// The single large lead story at the top of the front page, linking to
+// its full article page.
+import Link from "next/link";
 import { theme } from "@/lib/theme";
 
 type FeaturedProps = {
+  id: string;
   title: string;
   snippet: string;
   imageUrl: string;
   category: string;
 };
 
-export default function FeaturedStory({ title, snippet, imageUrl, category }: FeaturedProps) {
+export default function FeaturedStory({ id, title, snippet, imageUrl, category }: FeaturedProps) {
   return (
-    <div className="mb-10">
+    <Link href={`/article/${id}`} className="block mb-10 hover:opacity-90">
       <div className="text-xs tracking-widest uppercase mb-2 font-medium" style={{ color: theme.red }}>
         {category}
       </div>
@@ -24,7 +26,7 @@ export default function FeaturedStory({ title, snippet, imageUrl, category }: Fe
       <p className="text-base italic mb-4" style={{ color: theme.gray }}>
         {snippet}
       </p>
-      <img src={imageUrl} alt="" className="w-full block" style={{ filter: "sepia(8%) contrast(1.02)" }} />
-    </div>
+      <img src={imageUrl} alt="" className="w-full h-40 object-cover block" style={{ filter: "sepia(8%) contrast(1.02)" }} />
+    </Link>
   );
 }

@@ -1,6 +1,5 @@
-// Determines which edition (Morning/Evening) to show based on current
-// time, and fetches today's "new" posts shaped for the front page +
-// individual article pages.
+// Determines edition (Morning/Evening) and fetches today's posts,
+// grouped by category, for a dense homepage grid (not a fixed slot count).
 import { supabasePublic } from "./supabasePublic";
 
 export function getCurrentEdition(): "Morning" | "Evening" {
@@ -18,24 +17,13 @@ export async function getFrontPageData() {
   if (error) throw error;
   if (!posts || posts.length === 0) return null;
 
-  // Article pages start at page 2 (page 1 is the front page itself).
-  const articles = posts.map((post, i) => ({ ...post, pageNumber: i + 2 }));
-
-  const featuredPost = articles[0];
-  const teaserPosts = articles.slice(1, 5);
-
-  const featured = {
-    title: featuredPost.title,
-    snippet: featuredPost.body.split("\n\n")[0],
-    imageUrl: featuredPost.image_url,
-    category: featuredPost.category,
-  };
-
-  const teasers = teaserPosts.map((post) => ({
-    title: post.title,
-    imageUrl: post.image_url,
-    pageNumber: post.pageNumber,
-  }));
+  // Group all of today's posts by category — however many exist per
+  // category, no fixed count.
+  const byCategory: Record<string, typeof posts> = {};
+  for (const post of posts) {
+    if (!byCategory[post.category]) byCategory[post.category] = [];
+    byCategory[post.category].push(post);
+  }
 
   const date = new Date().toLocaleDateString("en-US", {
     year: "numeric", month: "long", day: "numeric",
@@ -44,8 +32,27 @@ export async function getFrontPageData() {
   return {
     edition: getCurrentEdition(),
     date,
-    featured,
-    teasers,
-    articles, // full list, used to render each article's own page later
+    topStory: posts[0], // most recent post overall, shown large at the top
+    byCategory, // e.g. { sports: [...], movies: [...], breaking: [...] }
+  };
+}
+
+export async function getArticleWithNeighbors(id: string) {
+  const { data: allPosts, error } = await supabasePublic
+    .from("posts")
+    .select("*")
+    .eq("status", "new")
+    .order("published_at", { ascending: false });
+
+  if (error) throw error;
+  if (!allPosts) return null;
+
+  const index = allPosts.findIndex((p) => p.id === id);
+  if (index === -1) return null;
+
+  return {
+    article: allPosts[index],
+    previous: index > 0 ? allPosts[index - 1] : null,
+    next: index < allPosts.length - 1 ? allPosts[index + 1] : null,
   };
 }

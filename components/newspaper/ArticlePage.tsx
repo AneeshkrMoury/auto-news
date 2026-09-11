@@ -1,6 +1,3 @@
-// Full newspaper-style article page. Composes the smaller pieces above.
-// This is the only file that touches the raw Supabase article shape —
-// everything below it works with plain, already-split props.
 import { theme } from "@/lib/theme";
 import ArticleKicker from "./ArticleKicker";
 import ArticleHeadline from "./ArticleHeadline";
@@ -8,9 +5,10 @@ import ArticleByline from "./ArticleByline";
 import ArticleImage from "./ArticleImage";
 import ArticleBody from "./ArticleBody";
 import ArticleDisclosure from "./ArticleDisclosure";
-import PageFooter from "./PageFooter";
+import ArticleNav from "./ArticleNav";
 
 type Article = {
+  id: string;
   title: string;
   body: string;
   image_url: string;
@@ -18,31 +16,41 @@ type Article = {
   published_at: string;
 };
 
-export default function ArticlePage({ article, pageNumber }: { article: Article; pageNumber: number }) {
+type NavItem = { id: string; title: string } | null;
+
+type ArticlePageProps = {
+  article: Article;
+  previous: NavItem;
+  next: NavItem;
+};
+
+export default function ArticlePage({ article, previous, next }: ArticlePageProps) {
   const paragraphs = article.body.split("\n\n").filter(Boolean);
   const disclosure = paragraphs[paragraphs.length - 1]?.startsWith("*This article")
     ? paragraphs.pop()
     : null;
 
-  const side = pageNumber % 2 === 0 ? "left" : "right";
-
   return (
     <div
-      className="w-full h-full px-14 py-12 overflow-hidden"
-      style={{ background: theme.paper, color: theme.ink, fontFamily: "var(--font-newsreader)" }}
+      className="px-6 md:px-14 py-12"
+      style={{
+        background: `${theme.paperTexture}, ${theme.paper}`,
+        color: theme.ink,
+        fontFamily: "var(--font-newsreader)",
+      }}
     >
       <ArticleKicker category={article.category} />
       <ArticleHeadline title={article.title} />
       <ArticleByline category={article.category} publishedAt={article.published_at} />
 
-      {/* Image + body share one container so the float wraps correctly */}
       <div>
-        <ArticleImage src={article.image_url} side={side}/>
+        <ArticleImage src={article.image_url} side="right" />
         <ArticleBody paragraphs={paragraphs} />
       </div>
 
       {disclosure && <ArticleDisclosure text={disclosure} />}
-      <PageFooter pageNumber={pageNumber} />
+
+      <ArticleNav previous={previous} next={next} />
     </div>
   );
 }

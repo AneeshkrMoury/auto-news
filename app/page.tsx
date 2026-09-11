@@ -1,5 +1,7 @@
-import FrontPage from "@/components/newspaper/FrontPage";
-import ArticlePage from "@/components/newspaper/ArticlePage";
+import { theme } from "@/lib/theme";
+import SiteHeader from "@/components/newspaper/SiteHeader";
+import TopStory from "@/components/newspaper/TopStory";
+import CategorySection from "@/components/newspaper/CategorySection";
 import { getFrontPageData } from "@/lib/getEdition";
 
 export default async function Home() {
@@ -10,15 +12,23 @@ export default async function Home() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col items-center gap-10 bg-neutral-400 p-10">
-      <div className="w-[680px] shadow-2xl">
-        <FrontPage edition={data.edition} date={data.date} featured={data.featured} teasers={data.teasers} />
+    <div
+      className="min-h-screen"
+      style={{ background: `${theme.paperTexture}, ${theme.paper}`, color: theme.ink, fontFamily: "var(--font-newsreader)" }}
+    >
+      <div className="max-w-5xl mx-auto px-6 py-8">
+        <SiteHeader edition={data.edition} date={data.date} />
+        <TopStory
+          id={data.topStory.id}
+          title={data.topStory.title}
+          body={data.topStory.body}
+          imageUrl={data.topStory.image_url}
+          category={data.topStory.category}
+        />
+        {Object.entries(data.byCategory).map(([category, posts]) => (
+          <CategorySection key={category} category={category} posts={posts} />
+        ))}
       </div>
-      {data.articles.map((article) => (
-        <div key={article.id} className="w-[680px] shadow-2xl">
-          <ArticlePage article={article} pageNumber={article.pageNumber} />
-        </div>
-      ))}
     </div>
   );
 }

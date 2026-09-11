@@ -7,34 +7,35 @@ import FeaturedStory from "./FeaturedStory";
 import TeaserCard from "./TeaserCard";
 
 type TeaserItem = {
+  id: string;
   title: string;
   imageUrl: string;
-  pageNumber: number;
 };
 
 type FrontPageProps = {
   edition: "Morning" | "Evening";
   date: string;
   featured: {
+    id: string;
     title: string;
     snippet: string;
     imageUrl: string;
     category: string;
   };
-  teasers: TeaserItem[]; // expects exactly 4
+  teasers: TeaserItem[]; // expects up to 4
 };
 
 export default function FrontPage({ edition, date, featured, teasers }: FrontPageProps) {
   return (
     <div
       className="w-full h-full px-14 py-10 overflow-hidden"
-      style={{ background: theme.paper, color: theme.ink }}
+      style={{ background: `${theme.paperTexture}, ${theme.paper}`, color: theme.ink }}
     >
       <Masthead edition={edition} date={date} />
       <FeaturedStory {...featured} />
       <div className="grid grid-cols-2 gap-6 pt-6" style={{ borderTop: `1px solid rgba(30,27,22,0.25)` }}>
-        {teasers.map((teaser, i) => (
-          <TeaserCard key={i} {...teaser} />
+        {teasers.map((teaser) => (
+          <TeaserCard key={teaser.id} {...teaser} />
         ))}
       </div>
     </div>

@@ -6,7 +6,7 @@ export default function ArticleImage({ src, side }: { src: string; side: "left" 
     <img
       src={src}
       alt=""
-      className={`w-[280px] mb-2 block ${side === "right" ? "ml-6" : "mr-6"}`}
+      className={`w-[280px] h-[280px] object-cover mb-2 block ${side === "right" ? "ml-6" : "mr-6"}`}
       style={{ float: side, shapeOutside: "margin-box", filter: "sepia(8%) contrast(1.02)" }}
     />
   );

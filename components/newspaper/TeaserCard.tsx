@@ -1,16 +1,17 @@
 // One small story preview in the front-page grid: thumbnail, headline,
-// and the page number a reader would flip to for the full article.
+// linking to that story's full article page.
+import Link from "next/link";
 import { theme } from "@/lib/theme";
 
 type TeaserProps = {
+  id: string;
   title: string;
   imageUrl: string;
-  pageNumber: number;
 };
 
-export default function TeaserCard({ title, imageUrl, pageNumber }: TeaserProps) {
+export default function TeaserCard({ id, title, imageUrl }: TeaserProps) {
   return (
-    <div className="flex gap-3 items-start">
+    <Link href={`/article/${id}`} className="flex gap-3 items-start hover:opacity-80">
       <img
         src={imageUrl}
         alt=""
@@ -24,10 +25,7 @@ export default function TeaserCard({ title, imageUrl, pageNumber }: TeaserProps)
         >
           {title}
         </div>
-        <div className="text-xs italic" style={{ color: theme.gold }}>
-          Page {pageNumber}
-        </div>
       </div>
-    </div>
+    </Link>
   );
 }
