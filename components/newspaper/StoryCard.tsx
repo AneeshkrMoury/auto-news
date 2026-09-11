@@ -21,8 +21,8 @@ export default function StoryCard({ id, title, body, imageUrl }: StoryCardProps)
         style={{ filter: "sepia(8%) contrast(1.02)" }}
       />
       <h3
-        className="text-3xl leading-tight mt-4 mb-2 no-underline group-hover:underline"
-        style={{ fontFamily: "var(--font-fraunces)", fontWeight: 600, color: theme.ink }}
+        className="text-base leading-snug mb-1 no-underline group-hover:underline"
+        style={{ fontFamily: "var(--font-fraunces)", fontWeight: 500, color: theme.ink }}
       >
         {title}
       </h3>
