@@ -1,32 +1,24 @@
 import { theme } from "@/lib/theme";
-import SiteHeader from "@/components/newspaper/SiteHeader";
-import StoryCard from "@/components/newspaper/StoryCard";
-import { getCategoryPosts, getCurrentEdition } from "@/lib/getEdition";
+import { getArticleWithNeighbors } from "@/lib/getEdition";
+import ArticlePage from "@/components/newspaper/ArticlePage";
+import { notFound } from "next/navigation";
 
-export default async function CategoryPage({ params }: { params: Promise<{ category: string }> }) {
-  const { category } = await params;
-  const posts = await getCategoryPosts(category);
-
-  const date = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
+export default async function Article({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const data = await getArticleWithNeighbors(id);
+  if (!data) notFound();
 
   return (
     <div
       className="min-h-screen"
-      style={{ background: `${theme.paperTexture}, ${theme.paper}`, color: theme.ink, fontFamily: "var(--font-newsreader)" }}
+      style={{
+        background: `${theme.paperTexture}, ${theme.paper}`,
+        color: theme.ink,
+        fontFamily: "var(--font-newsreader)",
+      }}
     >
-      <div className="max-w-5xl mx-auto px-6 py-8">
-        <SiteHeader edition={getCurrentEdition()} date={date} />
-        <h1
-          className="text-3xl mb-8"
-          style={{ fontFamily: "var(--font-fraunces)", fontWeight: 600, color: theme.red }}
-        >
-          {category.charAt(0).toUpperCase() + category.slice(1)}
-        </h1>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-          {posts.map((post: any) => (
-            <StoryCard key={post.id} id={post.id} title={post.title} body={post.body} imageUrl={post.image_url} />
-          ))}
-        </div>
+      <div className="max-w-3xl mx-auto px-6 md:px-10 py-10">
+        <ArticlePage article={data.article} previous={data.previous} next={data.next} />
       </div>
     </div>
   );

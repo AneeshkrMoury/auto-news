@@ -1,13 +1,14 @@
 // Article's hero image. Slight sepia filter keeps it in tone with the aged-paper look.
 // Article image, floated to one side so body text wraps around it —
 // alternates left/right by page number, matching real newspaper folio rhythm.
-export default function ArticleImage({ src, side }: { src: string; side: "left" | "right" }) {
+// Full-width hero image at the top of the article.
+export default function ArticleImage({ src }: { src: string }) {
   return (
     <img
       src={src}
       alt=""
-      className={`w-[280px] h-[280px] object-cover mb-2 block ${side === "right" ? "ml-6" : "mr-6"}`}
-      style={{ float: side, shapeOutside: "margin-box", filter: "sepia(8%) contrast(1.02)" }}
+      className="w-full h-[380px] object-cover block mb-8"
+      style={{ filter: "sepia(8%) contrast(1.02)" }}
     />
   );
 }

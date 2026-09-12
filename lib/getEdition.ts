@@ -69,3 +69,19 @@ export async function getCategoryPosts(category: string) {
   if (error) throw error;
   return posts || [];
 }
+
+// Fetches up to 3 other posts in the same category, excluding the
+// current article, for the "More in [Category]" sidebar.
+export async function getRelatedPosts(category: string, excludeId: string) {
+  const { data: posts, error } = await supabasePublic
+    .from("posts")
+    .select("*")
+    .eq("status", "new")
+    .eq("category", category)
+    .neq("id", excludeId)
+    .order("published_at", { ascending: false })
+    .limit(3);
+
+  if (error) throw error;
+  return posts || [];
+}
