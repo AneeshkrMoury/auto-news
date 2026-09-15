@@ -85,3 +85,36 @@ export async function getRelatedPosts(category: string, excludeId: string) {
   if (error) throw error;
   return posts || [];
 }
+
+// Front page needs more structure than a simple category grid: one
+// dominant lead story, a short "brief" rail, a "more top stories" rail,
+// plus the existing per-category desk sections.
+export async function getGazetteFrontPage() {
+  const { data: posts, error } = await supabasePublic
+    .from("posts")
+    .select("*")
+    .eq("status", "new")
+    .order("published_at", { ascending: false });
+
+  if (error) throw error;
+  if (!posts || posts.length === 0) return null;
+
+  const byCategory: Record<string, typeof posts> = {};
+  for (const post of posts) {
+    if (!byCategory[post.category]) byCategory[post.category] = [];
+    byCategory[post.category].push(post);
+  }
+
+  const date = new Date().toLocaleDateString("en-US", {
+    year: "numeric", month: "long", day: "numeric",
+  });
+
+  return {
+    date,
+    lead: posts[0],
+    briefs: posts.slice(1, 6),
+    moreTop: posts.slice(6, 9),
+    ticker: posts.slice(0, 6),
+    byCategory,
+  };
+}
