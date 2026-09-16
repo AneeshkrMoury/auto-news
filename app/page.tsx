@@ -35,8 +35,8 @@ export default async function Home() {
         <LatestHeadlines posts={data.latestHeadlines} />
         </div>
 
-        <div className="max-w-6xl mx-auto px-6 pb-12 grid grid-cols-1 md:grid-cols-[1fr_300px] gap-10">
-          <div /> {/* reserved for ad/sponsor slot later — empty on purpose */}
+        <div className="max-w-6xl mx-auto px-6 pt-6 pb-12 grid grid-cols-1 md:grid-cols-[1fr_300px] gap-10">
+          <div />
           <MarketsBox prices={metalPrices} />
         </div>
       <SiteFooter />
