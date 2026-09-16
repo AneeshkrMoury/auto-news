@@ -1,47 +1,76 @@
-// Ported from The Gazette template — topbar, masthead nameplate, and
-// primary nav combined. Weather/markets/search removed per decision;
-// nav categories are dynamic, not hardcoded to the template's demo list.
 import Link from "next/link";
 import { theme } from "@/lib/theme";
 
 const CATEGORIES = ["sports", "movies", "breaking"];
 
-export default function SiteHeader({ date }: { date: string }) {
+type SiteHeaderProps = {
+  date: string;
+  activeCategory?: string;
+  storyCount?: number;
+  lastUpdated?: string;
+  onThisDay?: string | null;
+};
+
+export default function SiteHeader({ date, activeCategory, storyCount, lastUpdated, onThisDay }: SiteHeaderProps) {
   return (
     <>
-      <div
-        className="text-xs tracking-wide uppercase py-2"
-        style={{ background: theme.ink, color: "#cfd4dc", fontFamily: "var(--font-mono)" }}
-      >
-        <div className="max-w-6xl mx-auto px-6 flex justify-between">
+      <div style={{ background: theme.ink, color: "#cfd4dc" }} className="py-2">
+        <div className="max-w-6xl mx-auto px-6 flex justify-between text-xs uppercase tracking-wide" style={{ fontFamily: "var(--font-mono)" }}>
           <span>{date}</span>
           <span style={{ color: "#9aa2ad" }}>Daymark Edition</span>
         </div>
       </div>
 
-      <header style={{ borderBottom: `3px solid ${theme.press}` }}>
-        <div className="max-w-6xl mx-auto px-6 py-6 text-center">
-          <Link href="/" className="inline-block">
-            <span
-              className="text-5xl"
-              style={{ fontFamily: "var(--font-serif)", fontWeight: 800, color: theme.ink }}
-            >
-              Daymark
-            </span>
-          </Link>
-        </div>
-      </header>
+      <div className="py-8" style={{ background: theme.paper }}>
+        <div className="max-w-6xl mx-auto px-6 grid grid-cols-1 md:grid-cols-[1fr_auto_1fr] items-center gap-4">
+          <div className="text-xs" style={{ fontFamily: "var(--font-mono)", color: theme.ink3 }}>
+            {storyCount !== undefined && <div>Morning Edition</div>}
+            {storyCount !== undefined && <div>{storyCount} stories today</div>}
+            {lastUpdated && <div>Updated {lastUpdated}</div>}
+          </div>
 
-      <nav
-        className="border-b"
-        style={{ borderColor: theme.rule, background: theme.card }}
-      >
-        <div className="max-w-6xl mx-auto px-6 py-3 flex justify-center gap-8 text-sm uppercase tracking-wide">
-          {CATEGORIES.map((cat) => (
-            <Link key={cat} href={`/category/${cat}`} style={{ color: theme.ink2 }} className="hover:opacity-70">
-              {cat}
-            </Link>
-          ))}
+          <Link href="/" className="text-center">
+            <div className="text-xs tracking-[0.3em] mb-1" style={{ fontFamily: "var(--font-mono)", color: theme.press }}>
+              THE
+            </div>
+            <div className="text-6xl" style={{ fontFamily: "var(--font-serif)", fontWeight: 800, color: theme.ink }}>
+              Daymark
+            </div>
+            <div className="text-xs uppercase tracking-widest mt-2" style={{ fontFamily: "var(--font-mono)", color: theme.ink3 }}>
+              Sports · Movies · Breaking — Rewritten Daily by AI
+            </div>
+          </Link>
+
+          <div className="text-xs text-right" style={{ fontFamily: "var(--font-mono)", color: theme.ink3 }}>
+            {onThisDay && (
+              <>
+                <div style={{ color: theme.press }}>On This Day</div>
+                <div className="mt-1 leading-snug">{onThisDay}</div>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <nav style={{ borderTop: `3px solid ${theme.press}`, borderBottom: `1px solid ${theme.rule}`, background: theme.card }}>
+        <div className="max-w-6xl mx-auto px-6 flex justify-center gap-10 text-sm uppercase tracking-wide" style={{ fontFamily: "var(--font-mono)" }}>
+          {CATEGORIES.map((cat) => {
+            const isActive = cat === activeCategory;
+            return (
+              <Link
+                key={cat}
+                href={`/category/${cat}`}
+                className="py-3"
+                style={{
+                  color: isActive ? theme.press : theme.ink2,
+                  fontWeight: isActive ? 700 : 500,
+                  borderBottom: isActive ? `2px solid ${theme.press}` : "2px solid transparent",
+                }}
+              >
+                {cat}
+              </Link>
+            );
+          })}
         </div>
       </nav>
     </>

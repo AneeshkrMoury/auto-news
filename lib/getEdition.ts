@@ -115,6 +115,10 @@ export async function getGazetteFrontPage() {
     briefs: posts.slice(1, 6),
     moreTop: posts.slice(6, 9),
     ticker: posts.slice(0, 6),
+    // ...inside getGazetteFrontPage, alongside the existing returns:
+    acrossDesks: posts.slice(9, 13),
+    latestHeadlines: posts.slice(0, 5),
     byCategory,
+    
   };
 }
