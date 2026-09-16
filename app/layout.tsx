@@ -1,3 +1,4 @@
+import "./globals.css";
 import { Newsreader, Archivo, IBM_Plex_Mono } from "next/font/google";
 
 const newsreader = Newsreader({ subsets: ["latin"], variable: "--font-serif" });

@@ -1,8 +1,8 @@
 import { theme } from "@/lib/theme";
-import { getArticleWithNeighbors, getRelatedPosts, getCurrentEdition } from "@/lib/getEdition";
-import SiteHeader from "@/components/newspaper/SiteHeader";
-import SiteFooter from "@/components/newspaper/SiteFooter";
-import ArticlePage from "@/components/newspaper/ArticlePage";
+import { getArticleWithNeighbors, getRelatedPosts } from "@/lib/getEdition";
+import SiteHeader from "@/components/gazette/SiteHeader";
+import SiteFooter from "@/components/gazette/SiteFooter";
+import GazetteArticle from "@/components/gazette/GazetteArticle";
 import { notFound } from "next/navigation";
 
 export default async function Article({ params }: { params: Promise<{ id: string }> }) {
@@ -14,20 +14,9 @@ export default async function Article({ params }: { params: Promise<{ id: string
   const date = new Date().toLocaleDateString("en-US", { year: "numeric", month: "long", day: "numeric" });
 
   return (
-    <div
-      className="min-h-screen"
-      style={{
-        background: `${theme.paperTexture}, ${theme.paper}`,
-        color: theme.ink,
-        fontFamily: "var(--font-newsreader)",
-      }}
-    >
-      <div className="max-w-6xl mx-auto px-6">
-        <SiteHeader edition={getCurrentEdition()} date={date} />
-      </div>
-      <div className="max-w-6xl mx-auto px-6 py-8">
-        <ArticlePage article={data.article} previous={data.previous} next={data.next} related={related} />
-      </div>
+    <div style={{ background: theme.paper, fontFamily: "var(--font-sans)" }}>
+      <SiteHeader date={date} />
+      <GazetteArticle article={data.article} previous={data.previous} next={data.next} related={related} />
       <SiteFooter />
     </div>
   );

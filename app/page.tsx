@@ -1,34 +1,26 @@
 import { theme } from "@/lib/theme";
-import SiteHeader from "@/components/newspaper/SiteHeader";
-import TopStory from "@/components/newspaper/TopStory";
-import CategorySection from "@/components/newspaper/CategorySection";
-import { getFrontPageData } from "@/lib/getEdition";
+import SiteHeader from "@/components/gazette/SiteHeader";
+import Ticker from "@/components/gazette/Ticker";
+import FrontPageLead from "@/components/gazette/FrontPageLead";
+import DeskSection from "@/components/gazette/DeskSection";
+import SiteFooter from "@/components/gazette/SiteFooter";
+import { getGazetteFrontPage } from "@/lib/getEdition";
 
 export default async function Home() {
-  const data = await getFrontPageData();
-
-  if (!data) {
-    return <div className="p-10 text-center">No articles published yet.</div>;
-  }
+  const data = await getGazetteFrontPage();
+  if (!data) return <div className="p-10 text-center">No articles published yet.</div>;
 
   return (
-    <div
-      className="min-h-screen"
-      style={{ background: `${theme.paperTexture}, ${theme.paper}`, color: theme.ink, fontFamily: "var(--font-newsreader)" }}
-    >
-      <div className="max-w-5xl mx-auto px-6 py-8">
-        <SiteHeader edition={data.edition} date={data.date} />
-        <TopStory
-          id={data.topStory.id}
-          title={data.topStory.title}
-          body={data.topStory.body}
-          imageUrl={data.topStory.image_url}
-          category={data.topStory.category}
-        />
+    <div style={{ background: theme.paper, fontFamily: "var(--font-sans)" }}>
+      <SiteHeader date={data.date} />
+      <Ticker posts={data.ticker} />
+      <FrontPageLead lead={data.lead} briefs={data.briefs} moreTop={data.moreTop} />
+      <div className="max-w-6xl mx-auto px-6">
         {Object.entries(data.byCategory).map(([category, posts]) => (
-          <CategorySection key={category} category={category} posts={posts} />
+          <DeskSection key={category} category={category} posts={posts as any} />
         ))}
       </div>
+      <SiteFooter />
     </div>
   );
 }
