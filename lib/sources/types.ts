@@ -10,5 +10,6 @@ export type Source = {
   attributionRequirement: string;
   imageRestrictions: string;
   republicationNotes: string;
+  defaultCategory: string;
   active: boolean;
 };
