@@ -1,7 +1,3 @@
-// The source registry: every source's license terms recorded here,
-// so ingestion can check permissions before processing anything.
-// Add new sources here — nothing else in the pipeline needs editing.
-
 import { Source } from "./types";
 
 export const SOURCE_REGISTRY: Source[] = [
@@ -14,7 +10,7 @@ export const SOURCE_REGISTRY: Source[] = [
     allowsCommercialUse: true,
     allowsDerivatives: true,
     attributionRequirement: "Credit Global Voices with a link back to the original article.",
-    imageRestrictions: "Images may be separately licensed by third-party photographers — verify per-image before reuse, do not assume CC BY applies to images.",
+    imageRestrictions: "Images may be separately licensed by third-party photographers — verify per-image before reuse.",
     republicationNotes: "See Global Voices Attribution Policy: https://globalvoices.org/about/global-voices-attribution-policy/",
     defaultCategory: "world",
     active: true,
@@ -32,5 +28,33 @@ export const SOURCE_REGISTRY: Source[] = [
     republicationNotes: "Articles republished under the EU's standard attribution-based reuse policy for institutional content.",
     defaultCategory: "science",
     active: true,
+  },
+  {
+    name: "The Dev Newsletter",
+    websiteUrl: "https://devnewsletter.com",
+    feedUrl: "https://devnewsletter.com/feed.xml",
+    licenseName: "CC BY 4.0",
+    licenseUrl: "https://creativecommons.org/licenses/by/4.0/",
+    allowsCommercialUse: true,
+    allowsDerivatives: true,
+    attributionRequirement: "Credit The Dev Newsletter, link back to the original article.",
+    imageRestrictions: "Not specified — verify per-image before reuse.",
+    republicationNotes: "Site explicitly welcomes bot/automated access per their Terms of Service (devnewsletter.com/terms/).",
+    defaultCategory: "technology",
+    active: true,
+  },
+  {
+    name: "SciDev.Net",
+    websiteUrl: "https://www.scidev.net",
+    feedUrl: "https://www.scidev.net/global/global_rss.xml",
+    licenseName: "Unverified — republication guidelines (not confirmed as CC BY-equivalent)",
+    licenseUrl: "https://www.scidev.net/global/content/media.html",
+    allowsCommercialUse: false,
+    allowsDerivatives: false,
+    attributionRequirement: "Credit required at start of excerpt, byline required where possible, limited to first 3 paragraphs per their stated guidelines — terms read more restrictive than a standard CC BY license.",
+    imageRestrictions: "Not verified.",
+    republicationNotes: "HELD, not active: their own reuse page describes a curated excerpt-republication process, not a clear open license. Revisit and verify directly with SciDev.Net before enabling.",
+    defaultCategory: "science",
+    active: false,
   },
 ];

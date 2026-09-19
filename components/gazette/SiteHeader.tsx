@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { theme } from "@/lib/theme";
 
-const CATEGORIES = ["sports", "movies", "breaking", "world", "science"];
+const CATEGORIES = ["sports", "movies", "breaking", "world", "science", "technology"];
 
 type SiteHeaderProps = {
   date: string;
