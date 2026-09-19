@@ -2,6 +2,8 @@
   "crons": [
     { "path": "/api/cron/publish", "schedule": "0 0 * * *" },
     { "path": "/api/cron/publish", "schedule": "0 12 * * *" },
-    { "path": "/api/cron/lifecycle", "schedule": "0 1 * * *" }
+    { "path": "/api/cron/lifecycle", "schedule": "0 1 * * *" },
+    { "path": "/api/cron/edition?type=morning", "schedule": "30 0 * * *" },
+    { "path": "/api/cron/edition?type=evening", "schedule": "30 12 * * *" }
   ]
 }
