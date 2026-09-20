@@ -1,5 +1,6 @@
 import { supabase } from "@/lib/supabase";
 import { processRawArticle } from "@/lib/processing/processArticle";
+import { sendAlert } from "@/lib/alert";
 
 export const maxDuration = 60;
 
@@ -9,19 +10,24 @@ export async function GET(request: Request) {
     return new Response("Unauthorized", { status: 401 });
   }
 
-  const { data: pending } = await supabase
-    .from("raw_articles")
-    .select("*, sources(*)")
-    .eq("review_status", "PENDING")
-    .limit(5); // small batch per run, same volume-control principle as before
+  try {
+    const { data: pending } = await supabase
+      .from("raw_articles")
+      .select("*, sources(*)")
+      .eq("review_status", "PENDING")
+      .limit(5);
 
-  if (!pending || pending.length === 0) {
-    return Response.json({ message: "No pending articles" });
+    if (!pending || pending.length === 0) {
+      return Response.json({ message: "No pending articles" });
+    }
+
+    const results = await Promise.all(
+      pending.map((article) => processRawArticle(article, article.sources))
+    );
+
+    return Response.json(results);
+  } catch (err) {
+    await sendAlert(`🚨 Daymark: article processing failed: ${String(err)}`);
+    return Response.json({ error: String(err) }, { status: 500 });
   }
-
-  const results = await Promise.all(
-    pending.map((article) => processRawArticle(article, article.sources))
-  );
-
-  return Response.json(results);
 }

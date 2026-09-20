@@ -12,3 +12,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     </html>
   );
 }
+
+export const metadata = {
+  // ...any existing fields...
+  alternates: {
+    types: { "application/rss+xml": "/feed.xml" },
+  },
+};

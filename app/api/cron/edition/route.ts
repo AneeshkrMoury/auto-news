@@ -1,4 +1,5 @@
 import { generateEdition } from "@/lib/editions/generateEdition";
+import { sendAlert } from "@/lib/alert";
 
 export async function GET(request: Request) {
   const authHeader = request.headers.get("authorization");
@@ -12,6 +13,11 @@ export async function GET(request: Request) {
     return Response.json({ error: "type param must be 'morning' or 'evening'" }, { status: 400 });
   }
 
-  const result = await generateEdition(editionType);
-  return Response.json(result);
+  try {
+    const result = await generateEdition(editionType);
+    return Response.json(result);
+  } catch (err) {
+    await sendAlert(`🚨 Daymark: edition generation (${editionType}) failed: ${String(err)}`);
+    return Response.json({ error: String(err) }, { status: 500 });
+  }
 }
