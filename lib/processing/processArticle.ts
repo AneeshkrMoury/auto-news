@@ -1,7 +1,7 @@
 import { supabase } from "@/lib/supabase";
 import { rewriteWithSource } from "./rewriteWithSource";
 import { validateClaims } from "./validateClaims";
-import { generateImage } from "@/lib/generateImage";
+import { searchEditorialImage } from "@/lib/images/getEditorialImage";
 
 export async function processRawArticle(rawArticle: any, source: any) {
   try {
@@ -26,24 +26,22 @@ export async function processRawArticle(rawArticle: any, source: any) {
       return { title: rawArticle.title, status: "rejected", reason: validation.unverified };
     }
 
-    const imageBuffer = await generateImage(
-      `Editorial illustration for a news article, no readable text, no logos: ${rewritten.title}`
-    );
-
-    const fileName = `${rawArticle.category}-${Date.now()}-${Math.random().toString(36).slice(2)}.png`;
-    const { error: uploadError } = await supabase.storage
-      .from("images")
-      .upload(fileName, imageBuffer, { contentType: "image/png" });
-    if (uploadError) throw uploadError;
-
-    const { data: urlData } = supabase.storage.from("images").getPublicUrl(fileName);
+    // Tier 1: real, relevance-checked photo via Openverse
+    const editorialImage = await searchEditorialImage(rewritten.title, rawArticle.category);
+    // Tier 2 (curated category pool) not built yet — falls through to Tier 3 for now.
+    // Tier 3: Daymark logo, has_real_image stays false, excluded from prominent slots.
+    const imageUrl = editorialImage?.url || "/daymark-logo.png";
+    const hasRealImage = !!editorialImage;
+    const imageAttribution = editorialImage?.attribution || null;
 
     const body = rewritten.body + `\n\n*This article was rewritten with AI assistance from ${source.name}. Please verify details independently.*`;
 
     const { error: insertError } = await supabase.from("posts").insert({
       title: rewritten.title,
       body,
-      image_url: urlData.publicUrl,
+      image_url: imageUrl,
+      has_real_image: hasRealImage,
+      image_attribution: imageAttribution,
       category: rawArticle.category,
       source_url: rawArticle.original_url,
       source_name: source.name,
@@ -59,7 +57,7 @@ export async function processRawArticle(rawArticle: any, source: any) {
       .update({ review_status: "PUBLISHED" })
       .eq("id", rawArticle.id);
 
-    return { title: rawArticle.title, status: "published" };
+    return { title: rawArticle.title, status: "published", hasRealImage };
   } catch (err) {
     return { title: rawArticle.title, status: "failed", error: String(err) };
   }
