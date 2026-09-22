@@ -17,6 +17,10 @@ export async function getFrontPageData() {
   if (error) throw error;
   if (!posts || posts.length === 0) return null;
 
+  // Prominent slot: prefer a post with a real image; fall back to the
+  // plain feed if none exist yet so the slot never goes empty.
+  const imagePosts = posts.filter((p) => p.has_real_image);
+
   // Group all of today's posts by category — however many exist per
   // category, no fixed count.
   const byCategory: Record<string, typeof posts> = {};
@@ -32,7 +36,7 @@ export async function getFrontPageData() {
   return {
     edition: getCurrentEdition(),
     date,
-    topStory: posts[0], // most recent post overall, shown large at the top
+    topStory: imagePosts[0] ?? posts[0], // most recent post overall, shown large at the top
     byCategory, // e.g. { sports: [...], movies: [...], breaking: [...] }
   };
 }
@@ -99,6 +103,11 @@ export async function getGazetteFrontPage() {
   if (error) throw error;
   if (!posts || posts.length === 0) return null;
 
+  // Prominent slots (lead, across-the-desks) prefer posts with a real
+  // image; fall back to the plain feed if there aren't enough yet.
+  const imagePosts = posts.filter((p) => p.has_real_image);
+  const lead = imagePosts[0] ?? posts[0];
+
   const byCategory: Record<string, typeof posts> = {};
   for (const post of posts) {
     if (!byCategory[post.category]) byCategory[post.category] = [];
@@ -111,14 +120,14 @@ export async function getGazetteFrontPage() {
 
   return {
     date,
-    lead: posts[0],
+    lead,
     briefs: posts.slice(1, 6),
     moreTop: posts.slice(6, 9),
     ticker: posts.slice(0, 6),
     // ...inside getGazetteFrontPage, alongside the existing returns:
-    acrossDesks: posts.slice(9, 13),
+    acrossDesks:
+      imagePosts.length >= 5 ? imagePosts.slice(1, 5) : posts.slice(9, 13),
     latestHeadlines: posts.slice(0, 5),
     byCategory,
-    
   };
 }
