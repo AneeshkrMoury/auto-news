@@ -57,4 +57,22 @@ export const SOURCE_REGISTRY: Source[] = [
     defaultCategory: "science",
     active: false,
   },
+  {
+    name: "European Commission Press Corner",
+    websiteUrl: "https://ec.europa.eu/commission/presscorner",
+    feedUrl: "https://ec.europa.eu/commission/presscorner/api/rss",
+    licenseName: "EU standard reuse policy (attribution required)",
+    licenseUrl: "https://commission.europa.eu/legal-notice_en",
+    allowsCommercialUse: true,
+    allowsDerivatives: true,
+    attributionRequirement: "Credit European Commission, link back to the original press release.",
+    imageRestrictions: "Feed is text-only, no enclosure images observed — not applicable in practice.",
+    republicationNotes: "General EU press feed (all policy areas), not sport-specific. No server-side category filter exists (tested directly — query params are ignored), so filtering happens client-side via categoryFilter. Sport items cluster around EU sport-policy calendar events (e.g. European Week of Sport), so most days will yield zero matches — kept active anyway since polling costs nothing.",
+    defaultCategory: "sports",
+    active: true,
+    categoryFilter: (categories) => {
+      const joined = categories.join(",");
+      return joined.includes("SPORT") ? "sports" : null;
+    },
+  },
 ];
