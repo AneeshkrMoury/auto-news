@@ -54,6 +54,17 @@ export default function SiteHeader({ date, activeCategory, storyCount, lastUpdat
 
       <nav style={{ borderTop: `3px solid ${theme.press}`, borderBottom: `1px solid ${theme.rule}`, background: theme.card }}>
         <div className="max-w-6xl mx-auto px-6 flex justify-center gap-10 text-sm uppercase tracking-wide" style={{ fontFamily: "var(--font-mono)" }}>
+          <Link
+            href="/"
+            className="py-3"
+            style={{
+              color: activeCategory === undefined ? theme.press : theme.ink2,
+              fontWeight: activeCategory === undefined ? 700 : 500,
+              borderBottom: activeCategory === undefined ? `2px solid ${theme.press}` : "2px solid transparent",
+            }}
+          >
+            Home
+          </Link>
           {CATEGORIES.map((cat) => {
             const isActive = cat === activeCategory;
             return (
