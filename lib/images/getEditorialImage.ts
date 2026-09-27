@@ -33,8 +33,16 @@ async function searchOpenverse(query: string) {
     const results = (data.results || []).filter((r: any) => isRelevant(query, r));
     if (results.length === 0) return null;
 
-    const preferred = results.find((r: any) => PREFERRED_SOURCES.includes(r.source));
-    const pick = preferred || results[0];
+    const preferredPool = results.filter((r: any) => PREFERRED_SOURCES.includes(r.source));
+    const pool = preferredPool.length > 0 ? preferredPool : results;
+
+    // A fixed query (especially the generic per-category fallback term)
+    // returns the same ranked list every time, so always taking the top
+    // result meant every article that hit this fallback in the same
+    // category got the identical photo. Picking randomly among the top
+    // few relevant matches spreads that out instead.
+    const topPool = pool.slice(0, 5);
+    const pick = topPool[Math.floor(Math.random() * topPool.length)];
 
     return {
       url: pick.url,

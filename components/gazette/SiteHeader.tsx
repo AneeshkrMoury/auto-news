@@ -34,10 +34,10 @@ export default function SiteHeader({ date, activeCategory, storyCount, lastUpdat
             <div className="text-xs tracking-[0.3em] mb-1" style={{ fontFamily: "var(--font-mono)", color: theme.press }}>
               THE
             </div>
-            <div className="flex items-center justify-center gap-3">
-              <Image src="/daymark-mark.png" alt="" width={44} height={44} />
-              <div className="text-6xl" style={{ fontFamily: "var(--font-serif)", fontWeight: 800, color: theme.ink }}>
-                Daymark
+            <div className="flex items-center justify-center" style={{ fontSize: "3.75rem" }}>
+              <Image src="/daymark-mark.png" alt="D" width={60} height={60} style={{ height: "0.82em", width: "auto" }} />
+              <div style={{ fontFamily: "var(--font-serif)", fontWeight: 800, color: theme.ink }}>
+                aymark
               </div>
             </div>
             <div className="text-xs uppercase tracking-widest mt-2" style={{ fontFamily: "var(--font-mono)", color: theme.ink3 }}>
