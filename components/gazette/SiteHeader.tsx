@@ -1,4 +1,5 @@
 import Link from "next/link";
+import Image from "next/image";
 import { theme } from "@/lib/theme";
 
 const CATEGORIES = ["sports", "movies", "breaking", "world", "science", "technology"];
@@ -33,8 +34,11 @@ export default function SiteHeader({ date, activeCategory, storyCount, lastUpdat
             <div className="text-xs tracking-[0.3em] mb-1" style={{ fontFamily: "var(--font-mono)", color: theme.press }}>
               THE
             </div>
-            <div className="text-6xl" style={{ fontFamily: "var(--font-serif)", fontWeight: 800, color: theme.ink }}>
-              Daymark
+            <div className="flex items-center justify-center gap-3">
+              <Image src="/daymark-mark.png" alt="" width={44} height={44} />
+              <div className="text-6xl" style={{ fontFamily: "var(--font-serif)", fontWeight: 800, color: theme.ink }}>
+                Daymark
+              </div>
             </div>
             <div className="text-xs uppercase tracking-widest mt-2" style={{ fontFamily: "var(--font-mono)", color: theme.ink3 }}>
               Sports · Movies · Breaking — Rewritten Daily by AI
